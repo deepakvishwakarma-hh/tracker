@@ -18,7 +18,7 @@ const Layout = ({ children }: any) => {
     const logoutHandler = () => {
         mutateUser(fetchJson('/api/logout'))
             .then(() => { router.reload() })
-            .catch(err => log('warning', err))
+            .catch((err: any) => log('warning', err))
     }
 
     if (router.pathname == '/auth') {

@@ -2,8 +2,9 @@ import React from 'react'
 import { motion } from "framer-motion"
 import TagsCustomization from '../tag-custmization'
 import { __storeHourTrack } from '../../lib/firebase';
-
+import useUser from '../../lib/useUser';
 const Popup = ({ store }: any) => {
+    const { user } = useUser()
 
     function showHourSelections() {
         const hours = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
@@ -31,7 +32,7 @@ const Popup = ({ store }: any) => {
 
     async function onStore() {
         if (isEmpty(inputs)) return alert('please fill everything!');
-        __storeHourTrack(inputs, () => {
+        __storeHourTrack(inputs, user.docId, () => {
             alert('track published.')
         })
     }

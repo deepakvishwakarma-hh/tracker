@@ -1,9 +1,17 @@
 import React from "react"
-
 import { __publishTag } from "../../lib/firebase"
+import useUser from "../../lib/useUser"
+
+
+
+
+
 
 
 const CreateTab = () => {
+
+    const { user } = useUser()
+
 
     const initial = { name: "", message: "" }
 
@@ -15,11 +23,10 @@ const CreateTab = () => {
         setInput(prev => { return { ...prev, [name]: value } })
     }
 
-
     async function onPublish() {
         if (input.name == "" || input.message == "") return alert('Please input something!');
         setPending(true)
-        __publishTag(input, () => { setPending(false) })
+        __publishTag(input, user.docId, () => { setPending(false) })
 
         setInput(initial)
     }

@@ -23,7 +23,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "lib/firebase.js"
+    "lib/firebase.js",
+    "lib/fetchJson.js"
   ],
   "exclude": [
     "node_modules"

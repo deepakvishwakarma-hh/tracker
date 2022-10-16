@@ -1,14 +1,15 @@
 import React from 'react'
-import { ref } from "../lib/firebase"
 import Tracks from "../components/tracks"
 import Popup from '../components/track-popup';
-import { onSnapshot } from "firebase/firestore";
+import { onSnapshot, doc } from "firebase/firestore";
 import { AnimatePresence } from 'framer-motion';
 import { FullPage } from "../components/Loadings"
+import { withSessionSsr } from "../lib/withSession"
+import { db } from "../firebase.config"
 
 export const { Consumer, Provider } = React.createContext({} as any)
 
-export default function MyPage() {
+export default function MyPage(props: any) {
 
   const [document, storeDocument] = React.useState<any>(false)
   const [trackerPopup, setTrackerPopup] = React.useState(false)
@@ -19,11 +20,11 @@ export default function MyPage() {
 
   React.useEffect(() => {
     (async function () {
-      onSnapshot(ref, (doc) => {
-        storeDocument(doc.data());
+      onSnapshot(doc(db, 'tracks', props.ssr.docId), (document) => {
+        storeDocument(document.data());
       });
     })()
-  }, [])
+  }, [props])
 
   if (!document) return <FullPage />
 
@@ -40,3 +41,18 @@ export default function MyPage() {
 
 }
 
+export const getServerSideProps = withSessionSsr(async function ({ req, res }: any) {
+  const user = req.session.user;
+  console.log(user)
+  if (user === undefined) {
+    res.setHeader("location", "/auth");
+    res.statusCode = 302;
+    res.end();
+    return {
+      props: { isLoggedIn: false },
+    };
+  }
+  return {
+    props: { ssr: user },
+  };
+})

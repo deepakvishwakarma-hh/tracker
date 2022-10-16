@@ -1,11 +1,12 @@
 import React from "react";
+import useUser from "../../lib/useUser"
 import { __removeTagByName } from '../../lib/firebase'
 
 const CustomiseTab = ({ store }: any) => {
-    console.log(store)
+    const { user } = useUser()
     return (
         <div style={{ height: "90% ", overflowY: 'auto', }} >
-            {store.tags.map((tag: any, index: number) => <Tag key={index}>{{ ...tag, delete: () => __removeTagByName(tag.name) }}</Tag>)}
+            {store.tags.map((tag: any, index: number) => <Tag key={index}>{{ ...tag, delete: () => __removeTagByName(tag.name, user.docId) }}</Tag>)}
         </div>
     )
 }

@@ -1,6 +1,5 @@
 import { ironOptions } from "../../lib/iron";
 import { withIronSessionApiRoute } from "iron-session/next";
-
 async function userRoute(req, res) {
     if (req.session.user) {
         res.json({

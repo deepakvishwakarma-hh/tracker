@@ -1,29 +1,24 @@
-import React from 'react'
+import React from 'react';
 import Head from 'next/head';
-import useUser from '../lib/useUser';
-import getDate from "../lib/dd_mm_yy"
-import { db } from "../firebase.config"
+import { db } from "../firebase.config";
 import { useRouter } from 'next/router';
-import fetchJson from '../lib/fetchJson';
-import Popup from '../components/track-popup';
-import { AnimatePresence } from "framer-motion"
+import { AnimatePresence } from "framer-motion";
 import { FullPage } from '../components/Loadings';
 import Component from '../components/tracks/track';
-import { withSessionSsr } from "../lib/withSession"
-import SleepingHour from "../components/SleepigHour"
-import FloatingBtn from '../components/floatingBtn';
 import { onSnapshot, doc } from "firebase/firestore";
-import CurrentDayAlert from '../components/alerts/currentDate';
-import CurrentHourAlert from '../components/alerts/currentHour';
+import { withSessionSsr, useUser, fetchJson, generateDateinString } from "../lib";
+import { TrackPopup, SleepingHour, FloatingBtn, CurrentDayAlert, CurrentHourAlert } from "../components";
 export const { Consumer, Provider } = React.createContext({} as any)
 
 export default function MyPage(props: any) {
 
     const router = useRouter()
     const { mutateUser } = useUser()
-
     const [document, storeDocument] = React.useState<any>(false)
     const [trackerPopup, setTrackerPopup] = React.useState(false)
+
+
+    console.log(document)
 
     function opposeTrackerPopupVisiblity() {
         setTrackerPopup(p => !p)
@@ -39,10 +34,11 @@ export default function MyPage(props: any) {
                     return
                 };
                 const value = { ...document.data() }
-                value.tracks = document.data().tracks.filter((track: any) => track.date === getDate())
+                value.tracks = document.data().tracks.filter((track: any) => track.date === generateDateinString())
                 storeDocument(value)
             })
         })()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
 
     if (!document) return <FullPage />
@@ -58,15 +54,10 @@ export default function MyPage(props: any) {
                     <CurrentHourAlert tracks={document.tracks} />
                     <CurrentDayAlert tracks={document.tracks} />
                     <AnimatePresence>
-                        {trackerPopup && <Popup store={document} />}
+                        {trackerPopup && <TrackPopup store={document} />}
                     </AnimatePresence>
-
-                    <div>
-                        {document.tracks.map((track: any, index: number) => <Component home key={index} data={track} />)}
-                    </div>
-
+                    <div>{document.tracks.map((track: any, index: number) => <Component home key={index} data={track} context={document} />)}</div>
                     <SleepingHour store={document} />
-
                     <FloatingBtn onClick={opposeTrackerPopupVisiblity} state={trackerPopup} />
                 </main>
             </Provider >

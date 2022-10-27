@@ -1,6 +1,5 @@
 const TrackForm = ({ onInputChange, state, setTagPopupToggled }: any) => {
 
-    console.log(state)
 
     return (
         <div className='fixed top-0 left-0 md:bg-gray-200  bg-white flex items-center justify-center w-full h-full bg-opacity-50'>

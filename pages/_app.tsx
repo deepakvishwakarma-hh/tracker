@@ -1,8 +1,8 @@
 import '../styles/globals.css'
+import { SWRConfig } from 'swr'
 import type { AppProps } from 'next/app'
 import Layout from '../components/layout'
 import fetchJson from "../lib/fetchJson"
-import { SWRConfig } from 'swr'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -18,10 +18,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Layout >
     </SWRConfig>
   )
-
-
-
-
 }
 
 export default MyApp

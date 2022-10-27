@@ -5,13 +5,17 @@ import TagsDetails from "./tagDetails"
 
 interface props {
     data: { trackedHours: any[], date: string },
-    home?: undefined | boolean
+    home?: undefined | boolean,
+    context?: any
 }
 
-const Component = ({ data, home = false }: props) => {
+const Track = ({ data, home = false, context }: props) => {
 
     const percentage = Math.floor(data.trackedHours.length / 24 * 100)
     const [isDiscriptionToggled, toggleDiscription] = React.useState(home)
+
+    console
+
 
     return (
         <section className='border-b border-gray-100'>
@@ -54,27 +58,7 @@ const Component = ({ data, home = false }: props) => {
                 <>
                     <main className='flex flex-col pl-9 pr-5'>
                         <ol className="relative border-l border-gray-200 ">
-                            {data.trackedHours.map((ele: any, index: number) => {
-                                if (ele.tag === 'sleeping') {
-                                    return (<li key={index} className="my-5 ml-4 bg-green-100 p-1.5 rounded">
-                                        <div className={`absolute w-3 h-3 bg-green-500 rounded-full mt-1.5 -left-1.5 border border-white`}></div>
-                                        <div className='flex items-end '>
-                                            <h3 className="text-2xl font-medium text-gray-900">{ele.hour}</h3>
-                                            <time className=" ml-2 mb-1 text-xs font-normal tracking-wider text-green-500">#{ele.tag}</time>
-                                        </div>
-                                        <p className="mb-4  text-xs font-normal text-gray-400 ">{ele.activity}</p>
-                                    </li>)
-                                }
-                                return (<li key={index} className="my-5 ml-4">
-                                    <div className={`absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white`}></div>
-                                    <div className='flex items-end '>
-                                        <h3 className="text-2xl font-medium text-gray-900">{ele.hour}</h3>
-                                        <time className=" ml-2 mb-1 text-xs font-normal tracking-wider text-purple-500">#{ele.tag}</time>
-                                    </div>
-                                    <p className="mb-4  text-xs font-normal text-gray-400 ">{ele.activity}</p>
-                                </li>)
-                            }
-                            )}
+                            {data.trackedHours.map((ele: any, index: number) => <Component key={index} ele={ele} />)}
                         </ol>
                     </main>
                     <Accordion>
@@ -91,8 +75,64 @@ const Component = ({ data, home = false }: props) => {
 }
 
 
-export default Component
+export default Track
+
+const Component: (props: { ele: any }) => JSX.Element = ({ ele }) => {
+
+    const [state, setState] = React.useState(false)
+    function opposeState() { setState(prev => !prev) }
+
+    const T = ele.tag === 'sleeping'
+
+    const classes = {
+        child: "flex items-end",
+        child__hour: "text-2xl font-medium text-gray-900",
+        activity: "mb-4  text-xs font-normal text-gray-400 ",
+        wrapper: T ? "my-5 ml-4 bg-green-100 p-1.5 rounded" : "my-5 ml-4",
+        child__tag: T ? " ml-2 mb-1 text-xs font-normal tracking-wider text-green-500" : " ml-2 mb-1 text-xs font-normal tracking-wider text-purple-500",
+        listStyle: T ? "absolute w-3 h-3 bg-green-500 rounded-full mt-1.5 -left-1.5 border border-white" : "absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white",
+    }
+
+    return (
+        <>
+            <li onClick={opposeState} className={classes.wrapper}>
+                <div className={classes.listStyle}></div>
+                <div className={classes.child}>
+                    <h3 className={classes.child__hour}>{ele.hour}</h3>
+                    <time className={classes.child__tag}>#{ele.tag}</time>
+                </div>
+                <p className={classes.activity}>{ele.activity}</p>
 
 
 
 
+
+            </li>
+            {state &&
+                <motion.div animate={{ opacity: 1 }} exit={{ opacity: 0 }} initial={{ opacity: 0 }} className=' z-50  bg-black flex items-center justify-center h-full w-full fixed top-0 left-0 bg-opacity-30 p-10 '>
+
+                    <div className="flex flex-col bg-white p-5 rounded-sm">
+
+                        <div className="flex">
+                            <h3 className="flex-1 p-5">{ele.hour}</h3>
+                            {/* <time className="flex-1 p-5">#{ele.tag}</time> */}
+
+
+                        </div>
+
+
+                        <button onClick={opposeState}>close</button>
+
+                    </div>
+
+
+
+                </motion.div>}
+        </>
+    )
+}
+
+
+import { motion } from "framer-motion"
+
+import { Consumer } from "../../pages/tracks"

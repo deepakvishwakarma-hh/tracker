@@ -1,12 +1,11 @@
 import React from 'react'
+import { db } from "../firebase.config"
 import Tracks from "../components/tracks"
 import Popup from '../components/track-popup';
-import { onSnapshot, doc } from "firebase/firestore";
 import { AnimatePresence } from 'framer-motion';
 import { FullPage } from "../components/Loadings"
 import { withSessionSsr } from "../lib/withSession"
-import { db } from "../firebase.config"
-
+import { onSnapshot, doc } from "firebase/firestore";
 export const { Consumer, Provider } = React.createContext({} as any)
 
 export default function MyPage(props: any) {
@@ -24,7 +23,8 @@ export default function MyPage(props: any) {
         storeDocument(document.data());
       });
     })()
-  }, [props])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (!document) return <FullPage />
 
@@ -36,9 +36,8 @@ export default function MyPage(props: any) {
         </AnimatePresence>
         <Tracks />
       </main>
-    </Provider >
+    </Provider>
   )
-
 }
 
 export const getServerSideProps = withSessionSsr(async function ({ req, res }: any) {
